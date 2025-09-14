@@ -60,7 +60,7 @@ flag_event = asyncio.Event()
 async def handler(event):
     if event.media:
         global flag_value
-        path = await event.download_media(file="E:/Music")
+        path = await event.download_media(file="C:/Music")    #change this to where ever you want (make sure there is enough disk space)
         if path:
             print(f"media saved at{path}")
             flag_value = True
@@ -107,5 +107,6 @@ async def send_url():
 
 
 asyncio.run(send_url())
+
 
 
