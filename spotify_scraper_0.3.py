@@ -17,7 +17,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 driver.get("https://open.spotify.com")
 
-# uncomment these if you want to use cookies to not log in every time
+# uncomment these if you want to use cookies to not log in every time (you need to run get_cookies first)
 """
 with open(
     r"Spotify Scraper\\spotify_cookies.json", "r"
@@ -119,3 +119,4 @@ track_table = pandas.DataFrame(
 track_table.to_csv(r"Spotify Scraper\track_table.csv")
 pandas.set_option("display.max_rows", None)
 print(track_table)
+
