@@ -4,35 +4,36 @@ import asyncio
 import codecs
 import csv
 import os
-
-# import aioconsole
-from websocket import send
+from dotenv import load_dotenv
 import pandas
 
+load_dotenv()
 
-api_id = 20303224
-api_hash = "70222f96855ca468a9640ee0feea612c"
+api_id = os.getenv("API_ID")
+api_hash = os.getenv("API_HASH")
 proxy = (
-    "91.238.92.45",
-    8443,
-    "EERighJJvXrFGRMCIMJdCQ",
+    os.getenv("PROXY_IP"),
+    os.getenv("PROXY_PORT"),
+    os.getenv("PROXY_SECRET"),
 )
 connection_type = connection.ConnectionTcpMTProxyRandomizedIntermediate
 
 client = TelegramClient(
-    r"Python\Spotify Scraper\Spotify_downloader.session",
-    api_id,
-    api_hash,
+    "Spotify Scraper/Spotify_downloader.session",
+    api_id,  # type: ignore
+    api_hash,  # type: ignore
     # connection=connection_type,
     # proxy=proxy,
 )
 
-if not os.path.exists(r"Python\Spotify Scraper\remaning_tracks.csv"):
-    remaining_df = pandas.read_csv("Python/Spotify Scraper/track_table.csv")
-    remaining = remaining_df.values.tolist()
-    # remaining = list(csv.reader(f))
+if not os.path.exists(r"Spotify Scraper\remaning_tracks.csv"):
+    try:
+        remaining_df = pandas.read_csv("Spotify Scraper/track_table.csv")
+        remaining = remaining_df.values.tolist()
+    except FileNotFoundError:
+        print("make a track_table.csv file using the spotify_scraper")
 else:
-    remaining_df = pandas.read_csv("Python/Spotify Scraper/remaning_tracks.csv")
+    remaining_df = pandas.read_csv("Spotify Scraper/remaning_tracks.csv")
     remaining = remaining_df.values.tolist()
 
 
@@ -41,27 +42,14 @@ counter = 1
 
 async def save_progress(row):
     global counter
-    with codecs.open("Python/Spotify Scraper/downloaded.csv", "a", "utf-8") as f:
+    with codecs.open("Spotify Scraper/downloaded.csv", "a", "utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(row)
     counter += 1
 
     if counter % 5 == 0:
         remaning_tracks_df = pandas.DataFrame(remaining)
-        remaning_tracks_df.to_csv(
-            "Python/Spotify Scraper/remaning_tracks.csv", index=False
-        )
-        # downloaded_df = pandas.DataFrame(downloaded)
-        # downloaded_df.to_csv("Python/Spotify Scraper/downloaded.csv", index=False)
-
-
-# async def input_listener():
-#     global running
-#     while True:
-#         command = await aioconsole.ainput()
-#         if command.strip().lower() == "stop":
-#             running = False
-#             await save_progress()
+        remaning_tracks_df.to_csv("Spotify Scraper/remaning_tracks.csv", index=False)
 
 
 flag_value = None
@@ -72,7 +60,6 @@ flag_event = asyncio.Event()
 async def handler(event):
     if event.media:
         global flag_value
-        # flag_value = None
         path = await event.download_media(file="E:/Music")
         if path:
             print(f"media saved at{path}")
@@ -84,9 +71,6 @@ async def handler(event):
     else:
         flag_value = False
         flag_event.set()
-
-
-# downloaded = []
 
 
 async def send_url():
@@ -113,7 +97,6 @@ async def send_url():
 
             if flag_value == True:
                 print(f"finished downloading {song_index}: {song_name}")
-                # downloaded.append(row)
                 await save_progress(row)
                 remaining.remove(row)
             else:
@@ -123,13 +106,4 @@ async def send_url():
     await client.disconnect()  # type: ignore
 
 
-# async def main():
-#     await asyncio.gather(send_url(), input_listener())
-
-
-# asyncio.run(main())
 asyncio.run(send_url())
-# asyncio.run(handler(event))
-
-
-# @MusicsHuntersbot

@@ -1,9 +1,7 @@
 import time
 import pandas
-import json
-
-# from types import coroutine
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from urllib.parse import urlparse
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -13,14 +11,16 @@ from selenium.common.exceptions import (
     NoSuchElementException,
 )
 
-service = Service(r"C:\Program Files\chromedriver-win64\chromedriver.exe")
+service = Service(ChromeDriverManager().install())
 options = Options()
 driver = webdriver.Chrome(service=service, options=options)
 
 driver.get("https://open.spotify.com")
 
+# uncomment these if you want to use cookies to not log in every time
+"""
 with open(
-    r"C:\All apps\Visual Studio Code\Python\Spotify Scraper\spotify_cookies.json", "r"
+    r"Spotify Scraper\\spotify_cookies.json", "r"
 ) as f:
     cookies = json.load(f)
 
@@ -28,7 +28,9 @@ for cookie in cookies:
     cookie.pop("sameSite", None)
     driver.add_cookie(cookie)
 
+
 driver.get("https://open.spotify.com/collection/tracks")
+"""
 
 input("wait for Spotify to load then hit enter in console...")
 
@@ -114,11 +116,6 @@ input("press enter to get track table")
 track_table = pandas.DataFrame(
     {"track_name": results["track_name"], "url": results["url"]}
 )
-track_table.to_csv(
-    r"C:\All apps\Visual Studio Code\Python\Spotify Scraper\track_table.csv"
-)
+track_table.to_csv(r"Spotify Scraper\track_table.csv")
 pandas.set_option("display.max_rows", None)
 print(track_table)
-
-
-# ".//div[2]/div/a/div"
