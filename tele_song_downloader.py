@@ -9,7 +9,7 @@ import pandas
 
 load_dotenv()
 
-api_id = os.getenv("API_ID")
+api_id = os.getenv("API_ID")    #get your api_id and api_hash from telegram (give it a search)
 api_hash = os.getenv("API_HASH")
 proxy = (
     os.getenv("PROXY_IP"),
@@ -107,3 +107,4 @@ async def send_url():
 
 
 asyncio.run(send_url())
+
