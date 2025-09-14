@@ -22,7 +22,7 @@ client = TelegramClient(
     "Spotify Scraper/Spotify_downloader.session",
     api_id,  # type: ignore
     api_hash,  # type: ignore
-    # connection=connection_type,
+    # connection=connection_type,    #uncomment to use MTproto proxy (you should fill the PROXY_IP, PROXY_PORT and PROXY_SECRET in the .env file)
     # proxy=proxy,
 )
 
@@ -56,7 +56,7 @@ flag_value = None
 flag_event = asyncio.Event()
 
 
-@client.on(events.NewMessage(incoming=True, from_users=("@MusicsHuntersbot")))
+@client.on(events.NewMessage(incoming=True, from_users=("@MusicsHuntersbot")))    #if you want you can use other bots as long as they send just a media file in reply
 async def handler(event):
     if event.media:
         global flag_value
@@ -93,7 +93,7 @@ async def send_url():
             except asyncio.TimeoutError:
                 print(f"timed out for {song_index}:{song_name}")
 
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.5)    #if your internet is really fast you may want to increase this by a bit so telegram won't get mad
 
             if flag_value == True:
                 print(f"finished downloading {song_index}: {song_name}")
@@ -107,4 +107,5 @@ async def send_url():
 
 
 asyncio.run(send_url())
+
 
